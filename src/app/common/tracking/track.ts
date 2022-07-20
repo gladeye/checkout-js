@@ -31,10 +31,10 @@ function transformUserData(user: Customer): GTMUser {
     const stateRegion: Set<string> = new Set();
     if (user.addresses) {
       for (const address of user.addresses) {
-        if (address.city !== '') {
+        if (address.city && address.city !== '') {
           city.add(address.city);
         }
-        if (address.stateOrProvince !== '') {
+        if (address.stateOrProvince && address.stateOrProvince !== '') {
           stateRegion.add(address.stateOrProvince);
         }
       }
