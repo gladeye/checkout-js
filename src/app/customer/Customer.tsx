@@ -13,7 +13,7 @@ import { noop } from 'lodash';
 import React, { Component, ReactNode } from 'react';
 
 import { withCheckout, CheckoutContextProps } from '../checkout';
-import { trackLoginData, trackSignUp } from '../common/tracking';
+import { trackLogin, trackSignUp } from '../common/tracking';
 import withRecurly from '../recurly/withRecurly';
 import { RecurlyContextProps } from '../recurly/RecurlyContext';
 import { LoadingOverlay } from '../ui/loading';
@@ -46,6 +46,7 @@ export interface WithCheckoutCustomerProps {
     canSubscribe: boolean;
     customerAccountFields: FormField[];
     checkoutButtonIds: string[];
+    customer?: any;
     defaultShouldSubscribe: boolean;
     email?: string;
     firstName?: string;
@@ -414,9 +415,9 @@ class Customer extends Component<CustomerProps & WithCheckoutCustomerProps & Rec
 
             this.draftEmail = undefined;
             const {
-                cart,
+                customer,
             } = this.props;
-            trackLoginData(cart?.customerId, cart?.email);
+            trackLogin(customer);
         } catch (error) {
             onSignInError(error);
         }
@@ -432,9 +433,9 @@ class Customer extends Component<CustomerProps & WithCheckoutCustomerProps & Rec
 
         onAccountCreated();
         const {
-            cart,
+            customer,
         } = this.props;
-        trackSignUp('Checkout', cart?.customerId, cart?.email);
+        trackSignUp('Checkout', customer);
     };
 
     private showCreateAccount: () => void = () => {
@@ -535,6 +536,7 @@ export function mapToWithCheckoutCustomerProps(
         clearError: checkoutService.clearError,
         createAccount: checkoutService.createCustomerAccount,
         continueAsGuest: checkoutService.continueAsGuest,
+        customer,
         sendLoginEmail: checkoutService.sendSignInEmail,
         defaultShouldSubscribe: config.shopperConfig.defaultNewsletterSignup,
         deinitializeCustomer: checkoutService.deinitializeCustomer,
