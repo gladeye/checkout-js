@@ -44,9 +44,9 @@ function transformUserData(user: Customer): GTMUser {
       user_id: user.id ?? user.customerId,
       email: user.email,
       is_guest: false,
-      phone_number: user.phoneNumber || user.addresses?.[0]?.phone,
-      first_name: user.firstName,
-      last_name: user.lastName,
+      phone_number: user.phoneNumber || user.addresses?.[0]?.phone || "",
+      first_name: user.firstName || "",
+      last_name: user.lastName || "",
       city: Array.from(city),
       state_region: Array.from(stateRegion),
     };
