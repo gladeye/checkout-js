@@ -110,7 +110,6 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
         isMultiShippingMode: false,
         hasSelectedShippingOptions: false,
     };
-
     private embeddedMessenger?: EmbeddedCheckoutMessenger;
     private unsubscribeFromConsignments?: () => void;
 
@@ -287,13 +286,20 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
                 <MobileView>
                     { matched => {
                         if (matched) {
-                            return <div className="test-02-wrapper layout-cart">
+                            setTimeout(() => {
+                                const checkoutHeader = document.querySelector(".checkoutHeader");
+                                if (checkoutHeader !== null) {
+                                    checkoutHeader.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+                                }
+                            }, 1000);
+
+                            return <div className="cart-summary-wrapper-mobile layout-cart">
                                     <LazyContainer>
                                         <CartSummary />
                                     </LazyContainer>
                                     </div>;
                         } else {
-                            return <br className="test-02-wrapper" />;
+                            return <span></span>;
                         }
 
                     } }
@@ -485,9 +491,7 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
             <MobileView>
                 { matched => {
                     if (matched) {
-                        return <LazyContainer>
-                            <CartSummaryDrawer />
-                        </LazyContainer>;
+                        return <span></span>;
                     }
 
                     return <aside className="layout-cart">
