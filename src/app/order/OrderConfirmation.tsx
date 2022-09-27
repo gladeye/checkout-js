@@ -5,7 +5,7 @@ import React, { lazy, Component, Fragment, ReactNode } from 'react';
 
 import { withCheckout, CheckoutContextProps } from '../checkout';
 import { ErrorLogger, ErrorModal } from '../common/error';
-import { trackPurchase, trackSignUp, OrderData } from '../common/tracking';
+import { trackPurchase, trackSignUp, CouponData, OrderData, PromotionData } from '../common/tracking';
 import { retry } from '../common/utility';
 import { getPasswordRequirementsFromConfig } from '../customer';
 import { isEmbedded, EmbeddedCheckoutStylesheet } from '../embeddedCheckout';
@@ -87,6 +87,13 @@ class OrderConfirmation extends Component<
                 createStepTracker().trackOrderComplete();
 
                 const {config, order} = this.props;
+                const coupons: CouponData[] = [];
+                order?.coupons?.forEach(coupon => {
+                    coupons.push({
+                        coupon: coupon.code,
+                        discount: coupon.discountedAmount,
+                    });
+                });
                 const purchaseData: OrderData = {
                     purchase: {
                         transaction_id: orderId,
@@ -95,16 +102,10 @@ class OrderConfirmation extends Component<
                         tax: order?.taxTotal,
                         shipping: order?.shippingCostTotal,
                         currency: order?.currency.code,
-                        coupons: [],
+                        coupons,
                         items: [],
                     },
                 };
-                order?.coupons?.forEach(coupon => {
-                    purchaseData.purchase.coupons.push({
-                        coupon: coupon.code,
-                        discount: coupon.discountedAmount,
-                    });
-                });
                 const cartItemLists = [
                     order?.lineItems.customItems,
                     order?.lineItems.digitalItems,
@@ -113,14 +114,38 @@ class OrderConfirmation extends Component<
                 ];
                 cartItemLists.forEach(itemList => {
                     itemList?.forEach((item: CustomItem | DigitalItem | GiftCertificateItem | PhysicalItem) => {
+                        const itemCoupons: CouponData[] = [];
+                        const itemPromotions: PromotionData[] = [];
+
+                        const itemQuantity = 'quantity' in item ? item.quantity : 1;
+
+                        if ( 'discounts' in item ) {
+                            let itemCouponIndex = 0;
+                            Object.keys(item.discounts).forEach((id: any) => {
+                                const discountedAmount = item.discounts[id] as unknown as number ; // item.discounts is of type {[key: string]: number} but incorrectly typed
+                                if ( id === 'coupon' ) {
+                                    itemCoupons.push({coupon: coupons[itemCouponIndex]?.coupon, discount: discountedAmount / itemQuantity});
+                                    itemCouponIndex++;
+                                } else {
+                                    itemPromotions.push({id, discount: discountedAmount / itemQuantity});
+                                }
+                            });
+                        }
+
+                        const itemFullPrice = 'listPrice' in item ? item.listPrice : item.amount;
+                        const itemDiscountedPrice = ('salePrice' in item ? item.salePrice : itemFullPrice) - (itemCoupons?.length ? itemCoupons.reduce((partialSum, coupon) => partialSum + coupon.discount, 0) : 0);
+
+
                         purchaseData.purchase.items.push({
                             item_id: 'productId' in item ? item.productId : undefined,
                             item_name: item.name,
                             item_variant: 'options' in item ? item.options?.[0]?.value : undefined,
                             currency: order?.currency.code,
                             item_brand: 'brand' in item ? item.brand ?? 'MitoQ' : undefined,
-                            price: 'salePrice' in item ? item.salePrice : 'listPrice' in item ? item.listPrice : item.amount,
-                            quantity: 'quantity' in item ? item.quantity : 1,
+                            price: parseFloat(itemDiscountedPrice.toFixed(2)),
+                            quantity: itemQuantity,
+                            coupons: itemCoupons,
+                            promotions: itemPromotions,
                         });
                     });
                 });
