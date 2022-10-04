@@ -222,9 +222,9 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
                     const itemCoupons: CouponData[] = [];
                     const itemPromotions: PromotionData[] = [];
 
-                    const itemFullPrice = 'listPrice' in item ? item.listPrice : item.amount;
-                    const itemDiscountedPrice = ('salePrice' in item ? item.salePrice : itemFullPrice) - ('couponAmount' in item ? item.couponAmount : 0);
                     const itemQuantity = 'quantity' in item ? item.quantity : 1;
+                    const itemFullPrice = 'listPrice' in item ? item.listPrice : item.amount;
+                    const itemDiscountedPrice = ('salePrice' in item ? item.salePrice : itemFullPrice) - ('couponAmount' in item ? (item.couponAmount / itemQuantity) : 0);
 
                     if ( 'discounts' in item ) {
                         let itemCouponIndex = 0;
