@@ -159,9 +159,18 @@
     }
 }
 
+.cart-summary-wrapper-mobile .cart {
+    display: block;
+}
+
 body.test_15 {
     .payments {
         display: block;
+    }
+
+    .cart-summary-wrapper-mobile.layout-cart {
+        padding-left: 0;
+        padding-right: 0;
     }
 }
 
