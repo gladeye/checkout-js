@@ -55,6 +55,7 @@ const OrderSummaryModal: FunctionComponent<OrderSummaryDrawerProps & OrderSummar
     </OrderSummarySection>
     <OrderSummarySection>
         <OrderSummaryTotal
+            lineItems={lineItems}
             orderAmount={ total }
             shopperCurrencyCode={ shopperCurrency.code }
             storeCurrencyCode={ storeCurrency.code }

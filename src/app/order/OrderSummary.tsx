@@ -51,6 +51,7 @@ const OrderSummary: FunctionComponent<OrderSummaryProps & OrderSummarySubtotalsP
         <OrderSummarySection>
             <OrderSummaryTotal
                 orderAmount={ total }
+                lineItems={nonBundledLineItems}
                 shopperCurrencyCode={ shopperCurrency.code }
                 storeCurrencyCode={ storeCurrency.code }
             />

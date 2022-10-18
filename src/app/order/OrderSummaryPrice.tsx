@@ -1,5 +1,6 @@
+import { LineItemMap } from '@bigcommerce/checkout-sdk';
 import classNames from 'classnames';
-import React, { Component, ReactNode } from 'react';
+import React, { Component, FunctionComponent, ReactNode,useEffect, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
 
 import { preventDefault } from '../common/dom';
@@ -13,6 +14,7 @@ export interface OrderSummaryPriceProps {
     testId?: string;
     currencyCode?: string;
     superscript?: string;
+    lineItems?: LineItemMap;
     actionLabel?: ReactNode;
     onActionTriggered?(): void;
 }
@@ -40,6 +42,56 @@ function isNumberValue(displayValue: number | ReactNode): displayValue is number
     return typeof displayValue === 'number';
 }
 
+const ConfidenceBlock: FunctionComponent<any> = props => {
+    const { amount, currencyCode, lineItems } = props;
+    const [isFreeShipping, setIsFreeShipping] = useState(false);
+    const [hasSubscription, setHasSubscription] = useState(false);
+    useEffect(() => {
+        const test = lineItems?.physicalItems && lineItems.physicalItems.find((v: any) => v.options.find((o: any) => o.value === 'send every 30 days'));
+        if (test !== hasSubscription) {
+            setHasSubscription(test);
+        }
+    }, [lineItems]);
+
+    useEffect(() => {
+        const total = !!amount ? amount : 0;
+        const flag = ((!currencyCode || currencyCode === 'NZD') && total > 150) ||
+        (currencyCode === 'USD' && total > 120) || (currencyCode === 'AUD' && total > 180)
+        || ((currencyCode === 'POUND' || currencyCode === 'EUR') && total > 100);
+        setIsFreeShipping(flag);
+    }, [amount, currencyCode]);
+    return (
+        <div className="payments">
+            {isFreeShipping && !hasSubscription && <div className="free-shipping">
+            Your order qualifies for free shipping!
+            </div>}
+            {hasSubscription && (
+            <><h2>Enjoy your MitoQ subscription with:</h2>
+            <ul className="benefit-list">
+                <li>Free shipping on all orders</li>
+                <li>Skip or pause subscription anytime</li>
+                <li>Cancel anytime</li>
+                <li>Free shipping on all orders</li>
+                <li>Delivered monthly, direct to you</li>
+            </ul></>)
+            }
+            <div className={`payments-method ${!hasSubscription ? 'full-method' : ''}`}>
+                <div className="payment-icon visacard-icon"></div>
+                <div className="payment-icon diners-icon"></div>
+                <div className="payment-icon mastercard-icon"></div>
+                <div className="payment-icon amex-icon"></div>
+                <div className="payment-icon discover-icon"></div>
+                <div className="payment-icon jcb-icon"></div>
+                {   !hasSubscription &&
+                    (<><div className="payment-icon paypal-icon"></div><div className="payment-icon gpay-icon"></div></>)
+                }
+                
+            </div>
+        </div>
+    );
+};
+
+
 class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPriceState> {
     static getDerivedStateFromProps(props: OrderSummaryPriceProps, state: OrderSummaryPriceState) {
         return {
@@ -63,12 +115,12 @@ class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPr
             currencyCode,
             label,
             superscript,
+            lineItems,
             testId,
             zeroLabel,
         } = this.props;
-
         const { highlight } = this.state;
-        const displayValue = getDisplayValue(amount, zeroLabel);
+        const displayValue = getDisplayValue(amount, zeroLabel);     
 
         return (
             <div data-test={ testId }>
@@ -120,6 +172,10 @@ class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPr
                         { children }
                     </div>
                 </CSSTransition>
+                {
+                testId === 'cart-total' && 
+                <ConfidenceBlock amount={amount} currencyCode={currencyCode} lineItems={lineItems} />
+                }
             </div>
         );
     }
