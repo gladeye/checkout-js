@@ -71,7 +71,6 @@ const ConfidenceBlock: FunctionComponent<any> = props => {
                 <li>Free shipping on all orders</li>
                 <li>Skip or pause subscription anytime</li>
                 <li>Cancel anytime</li>
-                <li>Free shipping on all orders</li>
                 <li>Delivered monthly, direct to you</li>
             </ul></>)
             }
