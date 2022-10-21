@@ -68,7 +68,6 @@ export interface CheckoutProps {
 }
 
 export interface CheckoutState {
-    scrolledUp: any;
     activeStepType?: CheckoutStepType;
     isBillingSameAsShipping: boolean;
     customerViewType?: CustomerViewType;
@@ -108,7 +107,6 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
         isBillingSameAsShipping: true,
         isCartEmpty: false,
         isRedirecting: false,
-        scrolledUp: false,
         isMultiShippingMode: false,
         hasSelectedShippingOptions: false,
     };
@@ -311,8 +309,8 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
             >
                 <MobileView>
                     { matched => {
-                        if (matched && !this.state.scrolledUp) {
-                            this.state.scrolledUp = setTimeout(() => {
+                        if (matched) {
+                            setTimeout(() => {
                                 const checkoutHeader = document.querySelector(".checkoutHeader");
                                 if (checkoutHeader !== null) {
                                     checkoutHeader.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
