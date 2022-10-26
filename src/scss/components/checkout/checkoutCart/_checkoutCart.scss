@@ -159,6 +159,12 @@
     display: none;
 }
 
+.cart-summary-wrapper-mobile {
+    .cart {
+        display: block;
+    }
+}
+
 .test_09 {
     .custom-description {
         color: rgba(255, 255, 255, 0.7);

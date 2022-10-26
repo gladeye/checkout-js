@@ -112,11 +112,17 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
     };
     private embeddedMessenger?: EmbeddedCheckoutMessenger;
     private unsubscribeFromConsignments?: () => void;
+    private timeoutRef?: any;
 
     componentWillUnmount(): void {
         if (this.unsubscribeFromConsignments) {
             this.unsubscribeFromConsignments();
             this.unsubscribeFromConsignments = undefined;
+        }
+        if (this.timeoutRef) {
+            window.clearTimeout(this.timeoutRef);
+
+            this.timeoutRef = undefined;
         }
     }
 
@@ -310,12 +316,15 @@ class Checkout extends Component<CheckoutProps & WithCheckoutProps & WithLanguag
                 <MobileView>
                     { matched => {
                         if (matched) {
-                            setTimeout(() => {
-                                const checkoutHeader = document.querySelector(".checkoutHeader");
-                                if (checkoutHeader !== null) {
-                                    checkoutHeader.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-                                }
-                            }, 1000);
+                            if (!this.timeoutRef) {
+                                this.timeoutRef = setTimeout(() => {
+                                    const checkoutHeader = document.querySelector(".checkoutHeader");
+                                    if (checkoutHeader !== null) {
+                                        checkoutHeader.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+                                    }
+                                }, 1000);
+                            }
+
 
                             return <div className="cart-summary-wrapper-mobile layout-cart">
                                     <LazyContainer>
