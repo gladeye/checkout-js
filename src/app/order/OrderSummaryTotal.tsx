@@ -7,6 +7,7 @@ import OrderSummaryPrice from './OrderSummaryPrice';
 
 export interface OrderSummaryTotalProps {
     orderAmount: number;
+    shippingAmount: number | undefined;
     shopperCurrencyCode: string;
     lineItems: LineItemMap;
     storeCurrencyCode: string;
@@ -14,6 +15,7 @@ export interface OrderSummaryTotalProps {
 
 const OrderSummaryTotal: FunctionComponent<OrderSummaryTotalProps & WithCurrencyProps> = ({
     shopperCurrencyCode,
+    shippingAmount,
     storeCurrencyCode,
     orderAmount,
     lineItems,
@@ -33,6 +35,8 @@ const OrderSummaryTotal: FunctionComponent<OrderSummaryTotalProps & WithCurrency
             <OrderSummaryPrice
                 amount={ orderAmount }
                 lineItems={lineItems}
+                currencyCode={storeCurrencyCode}
+                shippingAmount={shippingAmount}
                 className="cart-priceItem--total"
                 label={ label }
                 superscript={ hasDifferentCurrency ? '*' : undefined }

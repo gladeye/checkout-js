@@ -56,6 +56,7 @@ const OrderSummaryModal: FunctionComponent<OrderSummaryDrawerProps & OrderSummar
     <OrderSummarySection>
         <OrderSummaryTotal
             lineItems={lineItems}
+            shippingAmount={orderSummarySubtotalsProps.shippingAmount}
             orderAmount={ total }
             shopperCurrencyCode={ shopperCurrency.code }
             storeCurrencyCode={ storeCurrency.code }

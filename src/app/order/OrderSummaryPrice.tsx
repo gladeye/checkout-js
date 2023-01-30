@@ -5,10 +5,12 @@ import { CSSTransition } from 'react-transition-group';
 
 import { preventDefault } from '../common/dom';
 import { ShopperCurrency } from '../currency';
+import TranslatedString from '../locale/TranslatedString';
 
 export interface OrderSummaryPriceProps {
     label: ReactNode;
     amount?: number | null;
+    shippingAmount?: number | null;
     zeroLabel?: ReactNode;
     className?: string;
     testId?: string;
@@ -43,7 +45,7 @@ function isNumberValue(displayValue: number | ReactNode): displayValue is number
 }
 
 const ConfidenceBlock: FunctionComponent<any> = props => {
-    const { amount, currencyCode, lineItems } = props;
+    const { lineItems, shippingAmount } = props;
     const [isFreeShipping, setIsFreeShipping] = useState(false);
     const [hasSubscription, setHasSubscription] = useState(false);
     useEffect(() => {
@@ -54,12 +56,8 @@ const ConfidenceBlock: FunctionComponent<any> = props => {
     }, [lineItems]);
 
     useEffect(() => {
-        const total = !!amount ? amount : 0;
-        const flag = ((!currencyCode || currencyCode === 'NZD') && total > 150) ||
-        (currencyCode === 'USD' && total > 120) || (currencyCode === 'AUD' && total > 180)
-        || ((currencyCode === 'POUND' || currencyCode === 'EUR') && total > 100);
-        setIsFreeShipping(flag);
-    }, [amount, currencyCode]);
+        setIsFreeShipping(shippingAmount === 0);
+    }, [shippingAmount]);
     return (
         <div className="payments">
             {isFreeShipping && !hasSubscription && <div className="free-shipping">
@@ -84,7 +82,7 @@ const ConfidenceBlock: FunctionComponent<any> = props => {
                 {   !hasSubscription &&
                     (<><div className="payment-icon paypal-icon"></div><div className="payment-icon gpay-icon"></div></>)
                 }
-                
+
             </div>
         </div>
     );
@@ -107,6 +105,7 @@ class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPr
     render(): ReactNode {
         const {
             amount,
+            shippingAmount,
             actionLabel,
             onActionTriggered,
             children,
@@ -119,7 +118,7 @@ class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPr
             zeroLabel,
         } = this.props;
         const { highlight } = this.state;
-        const displayValue = getDisplayValue(amount, zeroLabel);     
+        const displayValue = getDisplayValue(amount, zeroLabel);
 
         return (
             <div data-test={ testId }>
@@ -172,8 +171,8 @@ class OrderSummaryPrice extends Component<OrderSummaryPriceProps, OrderSummaryPr
                     </div>
                 </CSSTransition>
                 {
-                testId === 'cart-total' && 
-                <ConfidenceBlock amount={amount} currencyCode={currencyCode} lineItems={lineItems} />
+                testId === 'cart-total' &&
+                <ConfidenceBlock shippingAmount={shippingAmount} amount={amount} currencyCode={currencyCode} lineItems={lineItems} />
                 }
             </div>
         );
