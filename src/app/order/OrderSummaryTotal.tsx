@@ -35,7 +35,6 @@ const OrderSummaryTotal: FunctionComponent<OrderSummaryTotalProps & WithCurrency
             <OrderSummaryPrice
                 amount={ orderAmount }
                 lineItems={lineItems}
-                currencyCode={storeCurrencyCode}
                 shippingAmount={shippingAmount}
                 className="cart-priceItem--total"
                 label={ label }
