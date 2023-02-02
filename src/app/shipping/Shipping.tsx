@@ -350,7 +350,7 @@ export function mapToShippingProps({
     }
 
     const shippingAddress = !shouldShowMultiShipping && consignments.length > 1 ? undefined : getShippingAddress();
-
+    console.log('shippingAddress', shippingAddress)
     return {
         assignItem: checkoutService.assignItemsToAddress,
         billingAddress: getBillingAddress(),
