@@ -1,46 +1,55 @@
 {
   "version": 2,
-  "appVersion": "1.209.2",
+  "appVersion": "1.213.20",
   "dynamicChunks": {
     "js": [
-      "billing-046edccc.js",
-      "cart-summary-drawer-4d43eeb1.js",
-      "cart-summary-fc1c3a44.js",
-      "customer-7ad924e2.js",
-      "order-summary-drawer-ffdc60d7.js",
-      "order-summary-0c9b2573.js",
-      "payment-ec662fee.js",
-      "shipping-1bd43146.js",
-      "translations-de-99d9f420.js",
-      "translations-es-mx-4b0e66c6.js",
-      "translations-es-fb8c40e7.js",
-      "translations-fr-bd0ac41c.js",
-      "translations-it-0c8a67df.js",
-      "translations-nl-2e0c6a53.js",
-      "translations-pt-br-f3cc54dc.js",
-      "translations-pt-3ff4aeb6.js",
-      "translations-sv-9f3af016.js"
+      "billing-0a5ad8ca.js",
+      "cart-summary-drawer-dc5930ad.js",
+      "cart-summary-eee6f56a.js",
+      "customer-6a67cf47.js",
+      "order-summary-drawer-806cdb0a.js",
+      "order-summary-864f7a3b.js",
+      "payment-e65d41a0.js",
+      "shipping-eea2c1be.js",
+      "translations-de-1bf7fa61.js",
+      "translations-es-mx-28ebf24d.js",
+      "translations-es-ba288359.js",
+      "translations-fr-9acf8732.js",
+      "translations-it-72e450cd.js",
+      "translations-nl-3b1a21f9.js",
+      "translations-pt-br-f68cc502.js",
+      "translations-pt-5ac1cb17.js",
+      "translations-sv-63f05a9e.js"
     ],
     "css": [
       "customer-1f83e095.css",
       "shipping-a118cf06.css"
     ],
     "svg": [
+      "static/AmericanExpress-dark-eb1f4fc2.svg",
+      "static/Discover-card-dark-e11646ff.svg",
+      "static/Paypal-card-dark-af0a55f6.svg",
+      "static/Visa-card-dark-2aca8dbc.svg",
       "static/card-abef8595.svg"
     ],
     "png": [
+      "static/Gpay-c0ee97c6.png",
+      "static/bullet-9cc6c9fb.png",
+      "static/diners-7bdd7aa5.png",
+      "static/jcb-095e5bb1.png",
+      "static/mastercard-af5d6f41.png",
       "static/powered_by_google_on_white-f127e368.png"
     ]
   },
   "js": [
-    "runtime-5de1643d.js",
-    "polyfill~checkout-2a880d02.js",
-    "transients~checkout-cbe94bf5.js",
-    "sentry~checkout-58f78d3f.js",
-    "vendors~checkout-8679dfa2.js",
-    "checkout-c84f1d23.js"
+    "runtime-fe1dc47b.js",
+    "polyfill~checkout-69ff4d62.js",
+    "transients~checkout-821b1039.js",
+    "sentry~checkout-39341d31.js",
+    "vendors~checkout-a5ec5048.js",
+    "checkout-436ca20c.js"
   ],
   "css": [
-    "checkout-9f38eb30.css"
+    "checkout-0bfd12be.css"
   ]
 }

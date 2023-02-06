@@ -12,7 +12,10 @@ export interface CheckoutProviderState {
     checkoutState: CheckoutSelectors;
 }
 
-export default class CheckoutProvider extends Component<CheckoutProviderProps, CheckoutProviderState> {
+export default class CheckoutProvider extends Component<
+    CheckoutProviderProps,
+    CheckoutProviderState
+    > {
     state: Readonly<CheckoutProviderState>;
 
     private unsubscribe?: () => void;
