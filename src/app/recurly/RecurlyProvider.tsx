@@ -30,9 +30,7 @@ function RecurlyProvider({cart, checkout, config, ...rest}: RecurlyProviderProps
     }, [cart, config]);
     useEffect(() => {
         if (cart?.customerId && config?.storeProfile) {
-            getUser(config.storeProfile.storeHash).then(user => {
-                console.log(user);
-            });
+            getUser(config.storeProfile.storeHash);
         }
 
     }, [cart, config]);
@@ -66,28 +64,43 @@ function RecurlyProvider({cart, checkout, config, ...rest}: RecurlyProviderProps
         });
 
         return new Promise((resolve, reject) => {
-            recurly.token(elements, customerInformation, (err, token) => {
-                if (err) {
-                    console.log(err);
-                    setRecurlyState(state => ({...state, isSubmitting: false}));
-                    reject(err);
-                } else {
-                    setRecurlyToken(token);
-                    submitOrder({
-                        token,
-                        currency: checkout.cart.currency.code,
-                        cartId: checkout.cart.id,
-                        store: config.storeProfile.storeHash,
-                    }).then(json => {
+            if (elements && customerInformation) {
+                recurly.token(elements, customerInformation, (err, token) => {
+                    if (err) {
                         setRecurlyState(state => ({...state, isSubmitting: false}));
-                        window.location.replace(`checkout/order-confirmation/${json.orderId}`);
+                        reject(err);
+                    } else {
+                        setRecurlyToken(token);
+                        submitOrder({
+                            token,
+                            currency: checkout.cart.currency.code,
+                            cartId: checkout.cart.id,
+                            store: config.storeProfile.storeHash,
+                        }).then(json => {
+                            setRecurlyState(state => ({...state, isSubmitting: false}));
+                            window.location.replace(`checkout/order-confirmation/${json.orderId}`);
 
-                    }, e => {
-                        setRecurlyState(state => ({...state, isSubmitting: false}));
-                        reject(e);
-                    });
-                }
-            });
+                        }, e => {
+                            setRecurlyState(state => ({...state, isSubmitting: false}));
+                            reject(e);
+                        });
+                    }
+                });
+            } else {
+                submitOrder({
+                    currency: checkout.cart.currency.code,
+                    cartId: checkout.cart.id,
+                    store: config.storeProfile.storeHash,
+                }).then(json => {
+                    setRecurlyState(state => ({...state, isSubmitting: false}));
+                    // window.location.replace(`checkout/order-confirmation/${json.orderId}`);
+
+                }, e => {
+                    setRecurlyState(state => ({...state, isSubmitting: false}));
+                    reject(e);
+                });
+            }
+
         });
 
     }, [checkout, config]);

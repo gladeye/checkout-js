@@ -19,6 +19,7 @@ interface WithCheckoutRecurlyCheckoutProps {
     customer?: Customer;
     config: StoreConfig;
     order?: Order;
+    isPaymentDataRequired(useStoreCredit?: boolean): boolean;
 
 }
 
@@ -27,7 +28,7 @@ interface RecurlyProps {
 }
 
 interface WithRecurlyProps {
-    submitRecurlyOrder(elements: Elements, customerInformation: CustomerData, secureToken?: any): Promise<any>;
+    submitRecurlyOrder(elements?: Elements, customerInformation?: CustomerData, secureToken?: any): Promise<any>;
     resubmitRecurlyOrder(customerInformation: CustomerData, secureToken: any): Promise<any>;
 }
 interface ThreeDSecureToken {
@@ -56,7 +57,7 @@ const RecurlyPaymentMethod: FunctionComponent<WithCheckoutRecurlyCheckoutProps &
                                                                                                                                          order,
                                                                                                                                          config,
     submitRecurlyOrder,
-    disableSubmit, setValidationSchema, hidePaymentSubmitButton, resubmitRecurlyOrder,
+    disableSubmit, setValidationSchema, hidePaymentSubmitButton, resubmitRecurlyOrder, isPaymentDataRequired,
                                                                                                                                          ...rest
                                                                                                                                      }) => {
     // console.log(order);
@@ -93,33 +94,40 @@ const RecurlyPaymentMethod: FunctionComponent<WithCheckoutRecurlyCheckoutProps &
             city,
             phone,
         } = checkout?.billingAddress || {};
-        if (firstName && lastName && recurlyValidationState.number.valid && recurlyValidationState.expiry.valid && recurlyValidationState.cvv.valid) {
-            const customerInformation = {
-                address1,
-                address2,
-                country,
-                state: stateOrProvince,
-                postal_code: postalCode,
-                first_name: firstName,
-                last_name: lastName,
-                city,
-                phone,
-            };
-            (token ? resubmitRecurlyOrder(customerInformation, token) : submitRecurlyOrder(recurlyElements, customerInformation)).then(() => {
-                // success
-            }, (err: any) => {
-                console.log('failure', err);
-                if (err.code === 'three_d_secure_action_required') {
-                    const risk = recurly.Risk();
-                    const secure = risk.ThreeDSecure({actionTokenId: err.threeDSecureActionTokenId});
-                    setRecurly3dSecure(secure);
-                } else {
-                    setError(err);
-                }
-            });
+        if (isPaymentDataRequired()) {
 
+            if (firstName && lastName && recurlyValidationState.number.valid && recurlyValidationState.expiry.valid && recurlyValidationState.cvv.valid) {
+                const customerInformation = {
+                    address1,
+                    address2,
+                    country,
+                    state: stateOrProvince,
+                    postal_code: postalCode,
+                    first_name: firstName,
+                    last_name: lastName,
+                    city,
+                    phone,
+                };
+                (token ? resubmitRecurlyOrder(customerInformation, token) : submitRecurlyOrder(recurlyElements, customerInformation)).then(() => {
+                    // success
+                }, (err: any) => {
+                    console.log('failure', err);
+                    if (err.code === 'three_d_secure_action_required') {
+                        const risk = recurly.Risk();
+                        const secure = risk.ThreeDSecure({actionTokenId: err.threeDSecureActionTokenId});
+                        setRecurly3dSecure(secure);
+                    } else {
+                        setError(err);
+                    }
+                });
+
+            }
+        } else {
+        submitRecurlyOrder().then(() => {
+            // success
+        }, (err: any) => {setError(err); });
         }
-    }, [checkout, firstName, lastName, recurlyElements, resubmitRecurlyOrder, submitRecurlyOrder, recurlyValidationState]);
+    }, [checkout, isPaymentDataRequired, firstName, lastName, recurlyValidationState.number.valid, recurlyValidationState.expiry.valid, recurlyValidationState.cvv.valid, resubmitRecurlyOrder, submitRecurlyOrder, recurlyElements]);
     const onSubmit = useCallback(() => {
         submitForm();
 
@@ -151,8 +159,6 @@ const RecurlyPaymentMethod: FunctionComponent<WithCheckoutRecurlyCheckoutProps &
     useEffect(() => {
         let cardElement: CardElement;
         const initRecurly = () => {
-            console.log(recurlyId);
-
             recurly.configure(recurlyId);
             const elements = recurly.Elements();
             setRecurlyElements(elements);
@@ -209,7 +215,7 @@ const RecurlyPaymentMethod: FunctionComponent<WithCheckoutRecurlyCheckoutProps &
                 className={ 'form-input optimizedCheckout-form-input' } data-recurly="first_name"
                 id={ 'recurly-first-name' } onChange={ setFirstNameCb } type="text" value={ firstName }
             />
-            { hasSubmitted && !firstName ? <div style={ {color: '#ff0000'} }>Please enter the first name on card</div> : null }
+            { isPaymentDataRequired() && hasSubmitted && !firstName ? <div style={ {color: '#ff0000'} }>Please enter the first name on card</div> : null }
         </div>
         <div className={ 'form-field' }>
             <label className={ 'form-label optimizedCheckout-form-label' } htmlFor={ 'recurly-last-name' }>
@@ -219,13 +225,13 @@ const RecurlyPaymentMethod: FunctionComponent<WithCheckoutRecurlyCheckoutProps &
                 className={ 'form-input optimizedCheckout-form-input' } data-recurly="last_name"
                 id={ 'recurly-last-name' } onChange={ setLastNameCb } type="text"
             />
-            { hasSubmitted && !lastName ? <div style={ {color: '#ff0000'} }>Please enter the last name on card</div> : null }
+            { isPaymentDataRequired() && hasSubmitted && !lastName ? <div style={ {color: '#ff0000'} }>Please enter the last name on card</div> : null }
         </div>
         <div id="recurly-elements" ref={ cardRef } style={ {height: '42px'} } />
-        { hasSubmitted && !recurlyValidationState.number.valid ? <div style={ {color: '#ff0000'} }>Credit card number is invalid</div> : null }
+        { isPaymentDataRequired() && hasSubmitted && !recurlyValidationState.number.valid ? <div style={ {color: '#ff0000'} }>Credit card number is invalid</div> : null }
 
-        { hasSubmitted && !recurlyValidationState.cvv.valid ? <div style={ {color: '#ff0000'} }>CVV is invalid</div> : null }
-        { hasSubmitted && !recurlyValidationState.expiry.valid ? <div style={ {color: '#ff0000'} }>Expiry date is invalid</div> : null }
+        { isPaymentDataRequired() && hasSubmitted && !recurlyValidationState.cvv.valid ? <div style={ {color: '#ff0000'} }>CVV is invalid</div> : null }
+        { isPaymentDataRequired() && hasSubmitted && !recurlyValidationState.expiry.valid ? <div style={ {color: '#ff0000'} }>Expiry date is invalid</div> : null }
 
         <div ref={ recurly3dSecureContainerRef } style={ {width: '100%', height: '0px', display: recurly3dSecure ? 'block' : 'none'} } />
 
@@ -241,6 +247,7 @@ function mapFromCheckoutProps(
             getCheckout,
             getCustomer,
             getOrder,
+            isPaymentDataRequired,
         },
     } = checkoutState;
     const config = getConfig();
@@ -258,6 +265,7 @@ function mapFromCheckoutProps(
         order,
         checkout,
         customer,
+        isPaymentDataRequired,
     };
 }
 function mapRecurlyToProps({submitOrder, resubmitRecurlyOrder}: RecurlyContextProps): WithRecurlyProps {

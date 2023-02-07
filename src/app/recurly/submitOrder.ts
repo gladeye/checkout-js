@@ -3,7 +3,7 @@ import { TokenPayload } from '@recurly/recurly-js';
 import config from './config';
 
 export interface RecurlySubmission {
-    token: TokenPayload;
+    token?: TokenPayload;
     currency: string;
     cartId: string;
     store: string;
