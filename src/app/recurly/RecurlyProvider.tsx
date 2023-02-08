@@ -93,7 +93,7 @@ function RecurlyProvider({cart, checkout, config, ...rest}: RecurlyProviderProps
                     store: config.storeProfile.storeHash,
                 }).then(json => {
                     setRecurlyState(state => ({...state, isSubmitting: false}));
-                    // window.location.replace(`checkout/order-confirmation/${json.orderId}`);
+                    window.location.replace(`checkout/order-confirmation/${json.orderId}`);
 
                 }, e => {
                     setRecurlyState(state => ({...state, isSubmitting: false}));
