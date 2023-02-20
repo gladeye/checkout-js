@@ -5,7 +5,7 @@ import React, { lazy, Component, Fragment, ReactNode } from 'react';
 
 import { withCheckout, CheckoutContextProps } from '../checkout';
 import { ErrorLogger, ErrorModal } from '../common/error';
-import { trackPurchase, trackSignUp, CouponData, OrderData, PromotionData } from '../common/tracking';
+import { trackGuest, trackPurchase, trackSignUp, CouponData, OrderData, PromotionData } from '../common/tracking';
 import { retry } from '../common/utility';
 import { getPasswordRequirementsFromConfig } from '../customer';
 import { isEmbedded, EmbeddedCheckoutStylesheet } from '../embeddedCheckout';
@@ -87,6 +87,12 @@ class OrderConfirmation extends Component<
                 createStepTracker().trackOrderComplete();
 
                 const {config, order} = this.props;
+                const isGuest = !order?.customerId;
+
+                if (isGuest && order?.billingAddress.email) {
+                    trackGuest(order?.billingAddress.email);
+                }
+
                 const coupons: CouponData[] = [];
                 order?.coupons?.forEach(coupon => {
                     coupons.push({

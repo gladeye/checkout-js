@@ -134,6 +134,11 @@ export function trackLoginData(userId: number | undefined, userEmail: string | u
   track(data);
 }
 
+export function trackGuest(email: string) {
+    const data = {event: 'guest_purchase', user: {email}};
+    track(data);
+}
+
 interface SignUpData {
   event: string;
   event_info: {
