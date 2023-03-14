@@ -29,20 +29,34 @@ class OrderSummaryItems extends React.Component<OrderSummaryItemsProps, OrderSum
             isExpanded: false,
         };
     }
+    isSubscription (productOptions: any) {
+        const flag = productOptions && productOptions[0] && productOptions[0].content
+        && (productOptions[0].content.indexOf('sends every') !== -1 || productOptions[0].content.indexOf('send every') !== -1);
+        return flag;
+    }
 
+    getDiscount(option: any) {
+        if (this.isSubscription(option.productOptions)) {
+            return (option.amount * 0.15).toFixed(2);
+        }
+        if (option.name.toLowerCase().indexOf('triple') !== -1 || (option.name.toLowerCase().indexOf('pure') !== -1) && option.quantity > 2) {
+            return (option.amount * 0.1).toFixed(2);
+        }
+        return (option.amount - option.amountAfterDiscount).toFixed(2);
+    }
+
+    getPercentage(option: any) {
+        if (this.isSubscription(option.productOptions)) {
+            return 15;
+        } else if (option.name.toLowerCase().indexOf('triple') !== -1) {
+            return 10;
+        }
+        return Math.round((option.amount - option.amountAfterDiscount) * 100 / option.amount);
+    }
     render(): ReactNode {
         const { items } = this.props;
         const { isExpanded } = this.state;
-        const isSubscription = (productOptions: any) => {
-            return productOptions && productOptions[0] && productOptions[0].content
-            && productOptions[0].content.toString().indexOf('send every') !== -1;
-        };
-        const getDiscount = (option: any) => {
-            return (option.amount - option.amountAfterDiscount).toFixed(2);
-        };
-        const getPercentage = (option: any) => {
-            return Math.round((option.amount - option.amountAfterDiscount) * 100 / option.amount);
-        };
+
         return (<Fragment>
             <h3
                 className="cart-section-heading optimizedCheckout-contentPrimary"
@@ -78,9 +92,9 @@ class OrderSummaryItems extends React.Component<OrderSummaryItemsProps, OrderSum
                                 className="productList-item is-visible"
                                 key={ summaryItemProps.id }
                             >
-                                <OrderSummaryItem { ...summaryItemProps } />                                
+                                <OrderSummaryItem { ...summaryItemProps } />
                             </li>
-                            { isSubscription(summaryItemProps.productOptions) || (summaryItemProps.quantity > 1  || summaryItemProps.name.toLowerCase().indexOf("triple") !== -1) &&
+                            { (this.isSubscription(summaryItemProps.productOptions) || (summaryItemProps.quantity > 2  || summaryItemProps.name.toLowerCase().indexOf('triple') !== -1)) &&
                                 ( <div key={ `saving-banner-${summaryItemProps.id}` } className='saving-banner'>
                                 <div className='banner-icon'>
                                     <svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -89,15 +103,15 @@ class OrderSummaryItems extends React.Component<OrderSummaryItemsProps, OrderSum
                                     <path d="M14.539 9.54749L14.4035 9.41182L15.0809 8.73447L14.2678 7.92138L13.5904 8.59806L13.4557 8.4633C12.7068 7.71467 11.4926 7.71467 10.7446 8.4633C9.99572 9.21193 9.99572 10.4248 10.7446 11.1737L11.8285 12.2576C12.1282 12.558 12.1282 13.0424 11.8285 13.3426C11.5291 13.6423 11.044 13.6423 10.7446 13.3426L9.65963 12.2576C9.35992 11.9581 9.35992 11.4731 9.65963 11.1737L8.84654 10.3606C8.0977 11.1092 8.0977 12.3227 8.84654 13.0717L8.98198 13.2071L8.3044 13.8847L9.11749 14.6978L9.79574 14.0202L9.93051 14.1557C10.6793 14.9045 11.8936 14.9045 12.6416 14.1557C13.3905 13.407 13.3905 12.1936 12.6416 11.4445L11.5577 10.3606C11.258 10.0609 11.258 9.57579 11.5577 9.27638C11.8571 8.9769 12.3429 8.9769 12.6416 9.27638L13.7266 10.3606C14.0263 10.66 14.0263 11.1451 13.7266 11.4445L14.5389 12.2576C15.2877 11.5097 15.2877 10.2961 14.539 9.54765L14.539 9.54749Z" fill="white"/>
                                     </svg>
                                 </div>
-                                { !isSubscription(summaryItemProps.productOptions) && (summaryItemProps.quantity > 1  || summaryItemProps.name.toLowerCase().indexOf("triple") !== -1) &&
-                                <div className='banner-text'>You’re saving ${getDiscount(summaryItemProps)}, that’s {getPercentage(summaryItemProps)}% off!</div>
+                                { (!this.isSubscription(summaryItemProps.productOptions) && (summaryItemProps.quantity > 2  || summaryItemProps.name.toLowerCase().indexOf('triple') !== -1)) &&
+                                <div className='banner-text'>You’re saving ${this.getDiscount(summaryItemProps)}, that’s {this.getPercentage(summaryItemProps)}% off!</div>
                                 }
-                                { isSubscription(summaryItemProps.productOptions) &&
-                                <div className='banner-text'>You’re saving ${getDiscount(summaryItemProps)} every month, that’s {getPercentage(summaryItemProps)}% off!</div>
+                                { this.isSubscription(summaryItemProps.productOptions) &&
+                                <div className='banner-text'>You’re saving ${this.getDiscount(summaryItemProps)} every month, that’s {this.getPercentage(summaryItemProps)}% off!</div>
                                 }
                         </div>)
                             }
-                           
+
                             </>
                         )
                 }
