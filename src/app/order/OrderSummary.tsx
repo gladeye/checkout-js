@@ -57,7 +57,7 @@ const OrderSummary: FunctionComponent<OrderSummaryProps & OrderSummarySubtotalsP
                 storeCurrencyCode={ storeCurrency.code }
             />
         </OrderSummarySection>
-        { !hasSubscription && <section className="cart-section cart-subscription optimizedCheckout-orderSummary-cartSection">
+        { hasSubscription && <section className="cart-section cart-subscription optimizedCheckout-orderSummary-cartSection">
             <div data-test="cart-total">
                 <div aria-live="polite" className="cart-priceItem optimizedCheckout-contentPrimary cart-priceItem--total">
                     <span className="cart-priceItem-label">
