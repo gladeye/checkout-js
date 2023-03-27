@@ -220,7 +220,7 @@
         display: flex;
         height: 28px;
         margin-bottom: 24px;
-        margin-top: 0;
+        margin-top: -24px;
 
         .banner-icon {
             align-items: center;
@@ -229,6 +229,7 @@
             display: flex;
             height: 29px;
             justify-content: center;
+            min-width: 29px;
             width: 29px;
         }
 
