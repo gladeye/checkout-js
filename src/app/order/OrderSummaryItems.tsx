@@ -64,16 +64,17 @@ class OrderSummaryItems extends React.Component<OrderSummaryItemsProps, OrderSum
                     ]
                         .slice(0, isExpanded ? undefined : COLLAPSED_ITEMS_LIMIT)
                         .map(summaryItemProps =>
+                            <>
                             <li
                                 className="productList-item is-visible"
                                 key={ summaryItemProps.id }
                             >
                                 <OrderSummaryItem { ...summaryItemProps } />
                             </li>
+                            </>
                         )
                 }
             </ul>
-
             { this.renderActions() }
         </Fragment>);
     }
