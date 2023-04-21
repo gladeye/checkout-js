@@ -39,6 +39,8 @@ method,
                     <ShopperCurrency amount={ method.cost } />
                 </span>
             </div>
+
+
         </>
     );
 };
