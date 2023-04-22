@@ -291,9 +291,11 @@
 .free-shipping-wrapper {
     display: none;
     padding: 16px 0;
+
     @media screen and (max-width: 767px) {
-       padding-top: 0;
+        padding-top: 0;
     }
+
     h6.free-shipping-label {
         color: #00e632;
         font-family: 'CircularXXWeb', sans-serif;
@@ -303,6 +305,7 @@
         line-height: 21px;
         text-align: right;
         @media screen and (max-width: 767px) {
+            margin-bottom: 24px;
             text-align: center;
         }
     }
@@ -321,6 +324,7 @@
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
         margin: 0;
+
         li {
             align-items: center;
             display: inline-flex;
@@ -329,13 +333,16 @@
             position: relative;
 
             &::after {
-                border-bottom: 2px dashed #d40449;
+                border-bottom: 2px dotted #d40449;
                 content: " ";
                 height: 0;
                 position: absolute;
                 right: 50%;
                 top: 70px;
                 width: 100%;
+                @media screen and (max-width: 767px) {
+                    top: 60px;
+                }
             }
 
             &:first-child::after {
@@ -358,6 +365,9 @@
                 top: 67px;
                 width: 8px;
                 z-index: 123;
+                @media screen and (max-width: 767px) {
+                    top: 57px;
+                }
             }
 
             .shipping-icon {
@@ -366,6 +376,13 @@
                 height: 59px;
                 justify-content: center;
                 margin-bottom: 24px;
+                @media screen and (max-width: 767px) {
+                    height: 45px;
+
+                    svg {
+                        height: 36px;
+                    }
+                }
             }
 
             span {
