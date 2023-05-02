@@ -380,7 +380,7 @@
                     height: 45px;
 
                     svg {
-                        height: 36px;
+                        height: 48px;
                     }
                 }
             }
@@ -396,6 +396,7 @@
                 width: 105px;
                 @media screen and (max-width: 767px) {
                     font-size: 14px;
+                    width: 97px;
                 }
             }
         }
