@@ -376,6 +376,10 @@
                 height: 59px;
                 justify-content: center;
                 margin-bottom: 24px;
+
+                svg path {
+                    fill: #d40449;
+                }
                 @media screen and (max-width: 767px) {
                     height: 45px;
 
